@@ -1,0 +1,12 @@
+[Unit]
+Description=uWSGI instance to serve spacechem
+After=network.target
+
+[Service]
+User=spacechem
+Group=www-data
+WorkingDirectory=/home/spacechem/SolutionNet
+ExecStart=/usr/local/bin/uwsgi --ini spacechem.ini
+
+[Install]
+WantedBy=multi-user.target

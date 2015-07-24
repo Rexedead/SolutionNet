@@ -1,7 +1,7 @@
 from cgi import escape
 from collections import defaultdict
 
-from boto.ses import SESConnection
+from boto.ses import SESConnection, regions
 
 
 def first_nonzero_index(input_list):
@@ -48,7 +48,8 @@ def process_chart_data(data, output, prefix):
 
 def ses_email(config, to_address, subject, body):
     connection = SESConnection(aws_access_key_id=config['AWS_ACCESS_KEY_ID'],
-                               aws_secret_access_key=config['AWS_SECRET_ACCESS_KEY_ID'])
+                               aws_secret_access_key=config['AWS_SECRET_ACCESS_KEY'],
+                                region=next(i for i in regions() if i.name == config['AWS_REGION']))
     from_address = '"SolutionNet" <{0}>'.format(config['FROM_EMAIL_ADDRESS'])
 
     connection.send_email(from_address,

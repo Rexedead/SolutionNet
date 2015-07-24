@@ -1,10 +1,11 @@
 import os
 from sqlite3 import DatabaseError
 import zipfile
+import sys
 
 from boto.exception import BotoServerError
 from flask import Flask, render_template, abort, request, redirect, session, url_for, flash
-from flaskext.sqlalchemy import SQLAlchemy
+from flask.ext.sqlalchemy import SQLAlchemy
 from flaskext.uploads import configure_uploads, patch_request_class
 from sqlalchemy import func, cast, Integer
 from sqlalchemy.orm.exc import NoResultFound
@@ -20,10 +21,14 @@ from models import *
 from functions import *
 from forms import *
 
+db.create_all()
 
 configure_uploads(app, savefiles)
 patch_request_class(app)
 
+@app.context_processor
+def inject_gaid():
+    return dict(ga_id=app.config["GA_ID"])
 
 # main page
 @app.route('/')
@@ -49,18 +54,20 @@ def register():
 
         # send email through SES
         subject = 'Account created for SpaceChem SolutionNet'
-        body = ("Thanks for registering on SpaceChem SolutionNet (http://spacechem.net)\n\n"
-                "Your username is: {0}").format(user.username)
+        body = ("Thanks for registering on SpaceChem SolutionNet (http://{1})\n\n"
+                "Your username is: {0}").format(user.username,app.config["SRV_NAME"])
 
-        try:
-            ses_email(app.config, user.email, subject, body)
-        except BotoServerError:
-            flash('Sending welcome email failed.', 'error')
+        if len(app.config["AWS_ACCESS_KEY_ID"]) >=16 and len(app.config["AWS_SECRET_ACCESS_KEY"]) >=16:
+            try:
+                ses_email(app.config, user.email, subject, body)
+                flash('Registration successful, welcome to SolutionNet!')
+            except BotoServerError, err:
+                print BotoServerError, err
+                flash('Sending welcome email failed.', 'error')
 
         session['user_id'] = user.user_id
         session['username'] = user.username
 
-        flash('Registration successful, welcome to SolutionNet!')
         return redirect(url_for('main_page'))
 
     return render_template('register.html', form=form)
@@ -450,5 +457,6 @@ def page_not_found(error):
 
 
 if __name__ == '__main__':
-    app.debug = True
+    #app.debug = True
+    #app.run(host="0.0.0.0",debug=True)
     app.run()

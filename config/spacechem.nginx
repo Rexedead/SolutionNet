@@ -1,0 +1,10 @@
+server {
+    listen 80;
+    server_name spacechem.net;
+    client_max_body_size 20M;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/home/spacechem/SolutionNet/spacechem.sock;
+    }
+}

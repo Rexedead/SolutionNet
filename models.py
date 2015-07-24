@@ -36,7 +36,7 @@ class Level(db.Model):
     level_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     internal_name = db.Column(db.String(255))
-    number = db.Column(db.String(5))
+    number = db.Column(db.String(10))
     slug = db.Column(db.String(255))
     order1 = db.Column(db.Integer)
     order2 = db.Column(db.Integer)
