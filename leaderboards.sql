@@ -1,2 +1,2 @@
-insert into leaderboards (slug, description) VALUES ('cycles', 'Best Cycles Count');
-insert into leaderboards (slug, description) VALUES ('symbols', 'Best Symbols Count');
+insert into leaderboards (slug, description) VALUES ('cycles', 'least cycles');
+insert into leaderboards (slug, description) VALUES ('symbols', 'least symbols');
