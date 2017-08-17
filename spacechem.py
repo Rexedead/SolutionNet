@@ -5,8 +5,8 @@ import sys
 
 from boto.exception import BotoServerError
 from flask import Flask, render_template, abort, request, redirect, session, url_for, flash
-from flask.ext.sqlalchemy import SQLAlchemy
-from flaskext.uploads import configure_uploads, patch_request_class
+from flask_sqlalchemy import SQLAlchemy
+from flask_uploads import configure_uploads, patch_request_class
 from sqlalchemy import func, cast, Integer
 from sqlalchemy.orm.exc import NoResultFound
 
