@@ -87,9 +87,36 @@ chown spacechem:spacechem /home/spacechem/upload
 sudo -u postgres createdb spacechem
 sudo -u postgres createuser spacechem
 
+create table if not exists levels
+(
+	"level_id " integer not null
+		constraint levels_pk
+			primary key,
+	"name " text,
+	internal_name text,
+	number text,
+	slug text,
+	order1 integer,
+	order2 integer,
+	category text,
+	outside_view boolean default false
+);
+alter table levels owner to spacechem;
+
+
+create table leaderboards
+(
+	slug text,
+	description text
+);
+alter table leaderboards owner to spacechem;
+
+
+
+
 #Start the app
 systemctl start spacechem
-systemctl enable  spacechem
+systemctl enable spacechem
 systemctl start nginx
 systemctl enable nginx
 
