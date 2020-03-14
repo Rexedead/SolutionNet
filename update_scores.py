@@ -1,6 +1,6 @@
 import json
 import re
-import urllib2
+import urllib.request
 
 from models import Level, OfficialScores, db
 
@@ -10,7 +10,7 @@ levels = Level.query.all()
 for level in levels:
     level_ids[level.internal_name] = level.level_id
 
-site = urllib2.urlopen('http://nebula.zachtronicsindustries.com/spacechem/score')
+site = urllib.request.urlopen('http://nebula.zachtronicsindustries.com/spacechem/score')
 scores = site.read()
 deserialized = json.loads(scores)
 

@@ -1,6 +1,6 @@
 SQLALCHEMY_DATABASE_URI = 'postgresql:///spacechem'
 SECRET_KEY = 'secret for session encryption'
-UPLOADS_DEFAULT_DEST = '/home/spacechem/upload'
+UPLOADS_DEFAULT_DEST = '/home/rx/upload'
 AWS_ACCESS_KEY_ID = 'no emails out'
 AWS_SECRET_ACCESS_KEY = 'no emails out'
 AWS_REGION = 'us-west-2'

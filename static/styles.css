@@ -147,7 +147,7 @@ div.form_submit input
 div.form_errors
 {
     float: left;
-    color: #f00;
+    color: #D3AC3F;
     font-size: 11px;
     line-height: 10px;
 }
@@ -188,7 +188,7 @@ table.data tr.unranked td
 
 table.data tr.mine td
 {
-    background-color: #050;
+    background-color: #004D40;
 }
 
 table.data th
@@ -197,7 +197,7 @@ table.data th
     line-height: 1.2em;
     font-weight: bold;
     background-color: #777;
-    color: #000;
+    color: #252525;
 }
 
 td.number, th.number
@@ -214,7 +214,7 @@ table.overview td
 {
     border: 1px solid #444;
     font-weight: bold;
-    color: #fff;
+    color: #E5E5E5;
     text-transform: uppercase;
     font-size: 10px;
 }
@@ -229,12 +229,12 @@ table.overview td div
 
 table.overview td.reactor
 {
-    background-color: #fff;
+    background-color: #E5E5E5;
 }
 
 table.overview td.unknown
 {
-    background-color: #f00;
+    background-color: #D3AC3F;
 }
 
 table.overview td.component
@@ -257,7 +257,7 @@ table.overview td.reactor div
 
 table.overview td.reactor a
 {
-    color: #000;
+    color: #252525;
 }
 
 table.overview td.reactor span.number
@@ -338,7 +338,7 @@ table.solution div.red, table.solution div.blue
 {
     z-index: 4;
     font-size: 10px;
-    color: #000;
+    color: #252525;
 }
 
 table.solution div.red
@@ -416,11 +416,11 @@ img.red-path, img.blue-path
 
 body
 {
-    background-color: #000;
+    background-color: #252525;
     margin-top: 20px;
     font-family: Tahoma, Arial, sans-serif;
     font-size: 16px;
-    color: #fff;
+    color: #E5E5E5;
     line-height: 24px;
 }
 
@@ -449,7 +449,7 @@ div.warning
     border: 1px solid #ddd;
     background-color: #333;
     font-weight: bold;
-    color: #f00;
+    color: #D3AC3F;
     margin: 20px;
     padding: 5px;
 }
@@ -468,7 +468,7 @@ ul#messages li
 
 ul#messages li.error
 {
-    color: #f00;
+    color: #D3AC3F;
 }
 
 div#content

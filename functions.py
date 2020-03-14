@@ -1,4 +1,3 @@
-from cgi import escape
 from collections import defaultdict
 
 from boto.ses import SESConnection, regions
@@ -54,7 +53,7 @@ def ses_email(config, to_address, subject, body):
 
     connection.send_email(from_address,
                           str(subject),
-                          str(escape(body)),
+                          str(body),
                           str(to_address))
 
 

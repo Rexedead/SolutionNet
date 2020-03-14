@@ -3,17 +3,21 @@ from sqlite3 import DatabaseError
 import zipfile
 import sys
 
-from boto.exception import BotoServerError
+from botocore.exceptions import ClientError
 from flask import Flask, render_template, abort, request, redirect, session, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import configure_uploads, patch_request_class
 from sqlalchemy import func, cast, Integer
 from sqlalchemy.orm.exc import NoResultFound
-
+from sqlalchemy.sql import text
+from jinja2 import Environment
+from jinja2.ext import do
 
 app = Flask(__name__)
 app.config.from_pyfile('spacechem.cfg')
+jinja_env = Environment(extensions=['jinja2.ext.do'])
 app.jinja_env.add_extension('jinja2.ext.do')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
@@ -61,8 +65,8 @@ def register():
             try:
                 ses_email(app.config, user.email, subject, body)
                 flash('Registration successful, welcome to SolutionNet!')
-            except BotoServerError, err:
-                print BotoServerError, err
+            except ClientError:
+                print (ClientError)
                 flash('Sending welcome email failed.', 'error')
 
         session['user_id'] = user.user_id
@@ -312,28 +316,28 @@ def user_page(username):
                                    Solution.user_id == user.user_id,
                                    Solution.approved == True))
                       .join(Solution.level)
-                      .order_by('levels.order1', 'levels.order2')
+                      .order_by(text('levels.order1', 'levels.order2'))
                       .all())
     researchnet_solutions = (Solution.query
                              .filter(and_(Level.category == 'researchnet',
                                           Solution.user_id == user.user_id,
                                           Solution.approved == True))
                              .join(Solution.level)
-                             .order_by('levels.order1', 'levels.order2')
+                             .order_by(text('levels.order1', 'levels.order2'))
                              .all())
     tf2_solutions = (Solution.query
                      .filter(and_(Level.category == 'tf2',
                                   Solution.user_id == user.user_id,
                                   Solution.approved == True))
                      .join(Solution.level)
-                     .order_by('levels.order1', 'levels.order2')
+                     .order_by(text('levels.order1', 'levels.order2'))
                      .all())
     corvi_solutions = (Solution.query
                        .filter(and_(Level.category == '63corvi',
                                     Solution.user_id == user.user_id,
                                     Solution.approved == True))
                        .join(Solution.level)
-                       .order_by('levels.order1', 'levels.order2')
+                       .order_by(text('levels.order1', 'levels.order2'))
                        .all())
 
     return render_template('user.html', **locals())
@@ -376,9 +380,9 @@ def solution_stats(slug):
     chart_data = dict()
 
     # convert all the data to ints, after converting to floats first
-    cycles_split = map(int, map(float, scores.cycle_counts.split()))
-    reactors_split = map(int, map(float, scores.reactor_counts.split()))
-    symbols_split = map(int, map(float, scores.symbol_counts.split()))
+    cycles_split = list(map(int, map(float, scores.cycle_counts.split())))
+    reactors_split = list(map(int, map(float, scores.reactor_counts.split())))
+    symbols_split = list(map(int, map(float, scores.symbol_counts.split())))
 
     # use reactor sum for total because the other ones can have solutions "off the chart" that aren't counted
     chart_data['total_solutions'] = sum(reactors_split[6:])

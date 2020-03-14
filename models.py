@@ -23,11 +23,24 @@ class User(db.Model):
         self.email = email
         self.set_password(password)
 
-    def set_password(self, password):
-        self.password = bcrypt.hashpw(password, bcrypt.gensalt())
+    def set_password(self, pw):
+        pwhash = bcrypt.hashpw(pw.encode('utf8'), bcrypt.gensalt())
+        self.password = pwhash.decode('utf8')
 
+    # def check_password(self, password):
+   
+    #     return bcrypt.checkpw(password, self.password)
     def check_password(self, password):
-        return bcrypt.hashpw(password, self.password) == self.password
+       return bcrypt.checkpw(password.encode('utf8'), self.password.encode('utf8'))
+
+
+    # def set_password(self, form_pw):
+    #     pwhash = bcrypt.hashpw(form_pw.encode('utf8'), bcrypt.gensalt())
+    #     self.password = pwhash
+
+    # def check_password(self, form_pw):
+    #     return bcrypt.checkpw(form_pw.encode('utf8'), self.password.encode('utf8'))
+
 
 
 class Level(db.Model):

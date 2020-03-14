@@ -16,125 +16,89 @@ The most basic need will be to remove the `.example` extension from the `spacech
 
 SolutionNet itself uses a PostgreSQL database, but it should be possible to use MySQL, SQLite, or other databases supported by SQLAlchemy as well. An Amazon Web Services account is not necessary unless you want to send the registration emails using SES.
 
-Versions of relevant packages being used on SolutionNet (other versions may not work without requiring modifications):
+Versions of relevant packages being used on SolutionNet at 2020.03 (other versions may not work without requiring modifications):
 
-* boto - 2.0b4
-* Flask - 0.6.1
-* Flask-SQLAlchemy - 0.11
-* Flask-Uploads - 0.1.2
-* Flask-WTF - 0.5.2
-* py-bcrypt - 0.2
-* SQLAlchemy - 0.6.6
-* WTForms - 0.6.3
+* boto - 2.49.0 
+* Flask - 1.1.1
+* Flask-SQLAlchemy - 2.4.1
+* Flask-Uploads - 0.2.1
+* Flask-WTF - 0.14.3
+* bcrypt - 3.1.7
+* SQLAlchemy - 1.3.15
+* Werkzeug - 0.16 (!)
+* WTForms - 2.2.1
 
 ## Sample setup steps with ubuntu vivid, postgres, uwsgi and nginx
-Clone the SolutionNet repo. Then:
-```
-cd SolutionNet
-cp ./config/* .
-mv ./spacechem.cfg.example ./spacechem.cfg
-rm ./spacechem.wsgi.example
-cd ..
-```
-Now update spacechem.cfg as follows:
+Clone the SolutionNet repo
+Edit spacechem.cfg.example as follows: 
 
   - **SECRET_KEY** - generate a secret key for session encryption and paste it here
   - **AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, FROM_EMAIL_ADDRESS,AWS_REGION** - these can be left as they are. If you want the system to send out a registration email via Amazon SES, fill these in
   - **SRV_NAME** - host header of the site for nginx to use
   - **GA_ID** - Google Analytics tracking id
 
-
+```
+Then:
+```
+cd SolutionNet
+mv ./spacechem.cfg.example ./spacechem.cfg
+mv ./spacechem.wsgi.example ./spacechem.wsgi
+cd ..
 ```
 # install the prerequisites
-apt-get update
-apt-get -y install python-dev postgresql-server-dev-all postgresql build-essential nginx wget gawk
-
-# pip that comes with vivid as of the time of writing is broken. 
-# unistall it first if it's already installed and then continue
-# install pip and the dependencies
-wget https://bootstrap.pypa.io/get-pip.py
-python get-pip.py
-ln -s /usr/local/bin/pip /usr/bin/pip
-pip install -U boto
-pip install -U Flask
-pip install -U Flask-SQLAlchemy
-pip install -U Flask-Uploads
-pip install -U Flask-WTF
-pip install -U py-bcrypt
-pip install -U SQLAlchemy
-pip install -U WTForms
-pip install -U psycopg2
-pip install -U uwsgi
+sudo apt-get update
+sudo apt-get -y install postgresql-server-dev-all postgresql build-essential nginx wget gawk
+sudo apt-get install python3-pip
+sudo pip3 install boto && sudo pip3 install Flask && sudo pip3 install Flask-SQLAlchemy && sudo pip3 install Flask-Uploads && sudo pip3 install Flask-WTF && sudo pip3 install bcrypt && sudo pip3 install SQLAlchemy && sudo pip3 install WTForms && sudo pip3 install psycopg2 && sudo pip3 install uwsgi
+sudo pip3 uninstall werkzeug
+sudo pip3 install werkzeug==0.16.1
 
 # Configure nginx
-gawk -f SolutionNet/servername.awk SolutionNet/spacechem.cfg SolutionNet/spacechem.nginx > nginx.conf
-rm /etc/nginx/sites-enabled/default
-mv nginx.conf /etc/nginx/sites-enabled/spacechem
+gawk -f SolutionNet/config/servername.awk SolutionNet/spacechem.cfg SolutionNet/config/spacechem.nginx > nginx.conf
+sudo rm /etc/nginx/sites-enabled/default
+sudo mv nginx.conf /etc/nginx/sites-enabled/spacechem
+
+# Configure systemd for uwsgi startup
+sudo mv SolutionNet/config/spacechem.service /etc/systemd/system
+mkdir /home/USERNAME/upload
+
+# Set up the database
+sudo -u postgres createdb spacechem
+sudo -u postgres createuser spacechem
+# Populated reference data in the database
+sudo -u rx psql spacechem < SolutionNet/levels.sql
+sudo -u rx psql spacechem < SolutionNet/leaderboards.sql
+
+---
+# Configure user, if you need
 adduser spacechem --disabled-password --gecos ,
 usermod -a -G spacechem www-data
 chmod 710 /home/spacechem
-
-# Configure systemd for uwsgi startup
-mv SolutionNet/spacechem.service /etc/systemd/system
-
 # Copy the application and make the upload directory
 cp -r SolutionNet /home/spacechem
 chown spacechem:spacechem /home/spacechem/SolutionNet
 mkdir /home/spacechem/upload
 chown spacechem:spacechem /home/spacechem/upload
-
-# Set up the database
-sudo -u postgres createdb spacechem
-sudo -u postgres createuser spacechem
-
-create table if not exists levels
-(
-	"level_id " integer not null
-		constraint levels_pk
-			primary key,
-	"name " text,
-	internal_name text,
-	number text,
-	slug text,
-	order1 integer,
-	order2 integer,
-	category text,
-	outside_view boolean default false
-);
-alter table levels owner to spacechem;
-
-
-create table leaderboards
-(
-	slug text,
-	description text
-);
-alter table leaderboards owner to spacechem;
-
-
-
+---
 
 #Start the app
-systemctl start spacechem
 systemctl enable spacechem
-systemctl start nginx
 systemctl enable nginx
+systemctl start spacechem
+systemctl start nginx
+
 
 # Configure daily statistics update
 echo "0 0 * * * python /home/spacechem/SolutionNet/update_scores.py" > cronline
 sudo -u spacechem crontab cronline
 rm cronline
 
-# Restart spacechem so that we can be sure that database schema is created
-systemctl restart spacechem
-
-# Populated reference data in the database
-sudo -u spacechem psql spacechem < SolutionNet/levels.sql
-sudo -u spacechem psql spacechem < SolutionNet/leaderboards.sql
 
 # Populate the current high scores
-sudo -u spacechem python /home/spacechem/SolutionNet/update_scores.py
+sudo -u spacechem python /home/USERNAME/SolutionNet/update_scores.py
+# If scores servers down, you can use last collected stats for 2020.03 
 
 # And now we are up and running
 systemctl restart nginx
+systemctl restart spacechem
 ```
