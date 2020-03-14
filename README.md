@@ -39,7 +39,7 @@ Edit spacechem.cfg.example as follows:
 
 ```
 Then:
-```
+
 cd SolutionNet
 mv ./spacechem.cfg.example ./spacechem.cfg
 mv ./spacechem.wsgi.example ./spacechem.wsgi
@@ -58,23 +58,23 @@ gawk -f SolutionNet/config/servername.awk SolutionNet/spacechem.cfg SolutionNet/
 sudo rm /etc/nginx/sites-enabled/default
 sudo mv nginx.conf /etc/nginx/sites-enabled/spacechem
 
-# Configure systemd for uwsgi startup
+## Configure systemd for uwsgi startup
 sudo mv SolutionNet/config/spacechem.service /etc/systemd/system
 mkdir /home/USERNAME/upload
 
-# Set up the database
+## Set up the database
 sudo -u postgres createdb spacechem
 sudo -u postgres createuser spacechem
-# Populated reference data in the database
+## Populated reference data in the database
 sudo -u rx psql spacechem < SolutionNet/levels.sql
 sudo -u rx psql spacechem < SolutionNet/leaderboards.sql
 
 ---
-# Configure user, if you need
+## Configure user, if you need
 adduser spacechem --disabled-password --gecos ,
 usermod -a -G spacechem www-data
 chmod 710 /home/spacechem
-# Copy the application and make the upload directory
+## Copy the application and make the upload directory
 cp -r SolutionNet /home/spacechem
 chown spacechem:spacechem /home/spacechem/SolutionNet
 mkdir /home/spacechem/upload
@@ -94,11 +94,11 @@ sudo -u spacechem crontab cronline
 rm cronline
 
 
-# Populate the current high scores
+## Populate the current high scores
 sudo -u spacechem python /home/USERNAME/SolutionNet/update_scores.py
-# If scores servers down, you can use last collected stats for 2020.03 
+## If scores servers down, you can use last collected stats for 2020.03 
 
-# And now we are up and running
+## And now we are up and running
 systemctl restart nginx
 systemctl restart spacechem
 ```
