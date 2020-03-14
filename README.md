@@ -49,7 +49,9 @@ cd ..
 sudo apt-get update
 sudo apt-get -y install postgresql-server-dev-all postgresql build-essential nginx wget gawk
 sudo apt-get install python3-pip
-sudo pip3 install boto && sudo pip3 install Flask && sudo pip3 install Flask-SQLAlchemy && sudo pip3 install Flask-Uploads && sudo pip3 install Flask-WTF && sudo pip3 install bcrypt && sudo pip3 install SQLAlchemy && sudo pip3 install WTForms && sudo pip3 install psycopg2 && sudo pip3 install uwsgi
+sudo pip3 install boto && sudo pip3 install Flask && sudo pip3 install Flask-SQLAlchemy 
+sudo pip3 install Flask-Uploads && sudo pip3 install Flask-WTF && sudo pip3 install bcrypt 
+sudo pip3 install SQLAlchemy && sudo pip3 install WTForms && sudo pip3 install psycopg2 && sudo pip3 install uwsgi
 sudo pip3 uninstall werkzeug
 sudo pip3 install werkzeug==0.16.1
 
