@@ -27,20 +27,8 @@ class User(db.Model):
         pwhash = bcrypt.hashpw(pw.encode('utf8'), bcrypt.gensalt())
         self.password = pwhash.decode('utf8')
 
-    # def check_password(self, password):
-   
-    #     return bcrypt.checkpw(password, self.password)
     def check_password(self, password):
        return bcrypt.checkpw(password.encode('utf8'), self.password.encode('utf8'))
-
-
-    # def set_password(self, form_pw):
-    #     pwhash = bcrypt.hashpw(form_pw.encode('utf8'), bcrypt.gensalt())
-    #     self.password = pwhash
-
-    # def check_password(self, form_pw):
-    #     return bcrypt.checkpw(form_pw.encode('utf8'), self.password.encode('utf8'))
-
 
 
 class Level(db.Model):
