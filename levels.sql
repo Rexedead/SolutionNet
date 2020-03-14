@@ -14,6 +14,27 @@ SET search_path = public, pg_catalog;
 --
 -- Name: levels_level_id_seq; Type: SEQUENCE SET; Schema: public; Owner: spacechem
 --
+create table if not exists levels
+(
+	level_id integer not null
+		constraint levels_pk
+			primary key,
+	name text,
+	internal_name text,
+	number text,
+	slug text,
+	order1 integer,
+	order2 integer,
+	category text,
+	outside_view boolean default false
+);
+
+alter table levels owner to spacechem;
+
+create unique index if not exists levels_level_id_uindex
+	on levels (level_id);
+
+
 
 SELECT pg_catalog.setval('levels_level_id_seq', 207, true);
 
