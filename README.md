@@ -44,7 +44,7 @@ cd SolutionNet
 mv ./spacechem.cfg.example ./spacechem.cfg
 mv ./spacechem.wsgi.example ./spacechem.wsgi
 cd ..
-```
+
 # install the prerequisites
 sudo apt-get update
 sudo apt-get -y install postgresql-server-dev-all postgresql build-essential nginx wget gawk
@@ -81,7 +81,7 @@ mkdir /home/spacechem/upload
 chown spacechem:spacechem /home/spacechem/upload
 ---
 
-#Start the app
+# Start the app
 systemctl enable spacechem
 systemctl enable nginx
 systemctl start spacechem
